@@ -128,15 +128,18 @@ The application includes automatic database seeding to populate empty databases 
 You can also seed the database manually using command-line options:
 
 ```bash
-# Seed database only if empty (same as automatic behavior)
+# Using debug build (recommended for development)
+./target/debug/backend --seed       # Seed database only if empty
+./target/debug/backend --force-seed # Force seed database (adds items regardless of existing data)
+./target/debug/backend --help       # Show help for available commands
+
+# Using release build (when available)
 ./target/release/backend --seed
-
-# Force seed database (adds items regardless of existing data)  
-./target/release/backend --force-seed
-
-# Show help for available commands
+./target/release/backend --force-seed  
 ./target/release/backend --help
 ```
+
+**Note:** The seeding commands automatically run database migrations first, so you don't need to worry about table creation.
 
 ### **Production Behavior**
 - Seeding is **disabled** in production environments (`LEPTOS_ENV=PROD`)
@@ -220,7 +223,8 @@ The template currently includes:
 - Verify `DATABASE_URL` is set in `.env` file
 - Check that the target directory exists for SQLite file creation
 - Run migrations manually if auto-migration fails: `sqlx migrate run --source repo_src/frontend/migrations`
-- Use manual seeding commands if needed: `./target/release/backend --seed`
+- Use manual seeding commands if needed: `./target/debug/backend --seed` (debug build recommended for development)
+- **Note:** Database seeding commands automatically run migrations first, so table creation is handled automatically
 
 **Runtime Issues:**
 - If you see `spawn_local` errors, ensure `leptos_axum` uses default features in `backend/Cargo.toml`

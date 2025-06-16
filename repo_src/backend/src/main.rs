@@ -26,6 +26,20 @@ async fn main() {
                 // Run seeding in a LocalSet
                 let local = LocalSet::new();
                 local.run_until(async move {
+                    // First, run migrations to ensure database schema exists
+                    #[cfg(feature = "DATABASE_AUTO_MIGRATE")]
+                    {
+                        println!("🔧 Running database migrations first...");
+                        match frontend::database::run_migrations().await {
+                            Ok(_) => println!("✅ Database migrations completed successfully!"),
+                            Err(e) => {
+                                println!("❌ Database migrations failed: {}", e);
+                                std::process::exit(1);
+                            }
+                        }
+                    }
+                    
+                    // Then run seeding
                     match frontend::database::seed_database().await {
                         Ok(_) => println!("✅ Manual database seeding completed successfully!"),
                         Err(e) => {
@@ -48,6 +62,20 @@ async fn main() {
                 // Run force seeding in a LocalSet
                 let local = LocalSet::new();
                 local.run_until(async move {
+                    // First, run migrations to ensure database schema exists
+                    #[cfg(feature = "DATABASE_AUTO_MIGRATE")]
+                    {
+                        println!("🔧 Running database migrations first...");
+                        match frontend::database::run_migrations().await {
+                            Ok(_) => println!("✅ Database migrations completed successfully!"),
+                            Err(e) => {
+                                println!("❌ Database migrations failed: {}", e);
+                                std::process::exit(1);
+                            }
+                        }
+                    }
+                    
+                    // Then run force seeding
                     match frontend::database::force_seed_database().await {
                         Ok(_) => println!("✅ Force database seeding completed successfully!"),
                         Err(e) => {
